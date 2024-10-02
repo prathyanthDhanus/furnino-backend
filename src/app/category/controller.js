@@ -35,6 +35,7 @@ module.exports = {
   updateCategory: async (req, res) => {
     const { categoryId } = req.query;
     const { categoryName } = req.body;
+    console.log(categoryId,categoryName)
     let imagePath = null;
     if (req.file) {
       imagePath = req.file.path;

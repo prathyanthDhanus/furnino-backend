@@ -18,6 +18,14 @@ app.use("/api/category",category);
 const subCategory = require("./src/app/subCategory/route")
 app.use("/api/sub-category",subCategory);
 
+const review = require("./src/app/review/route")
+app.use("/api/review",review);
+
+const product = require("./src/app/product/route")
+app.use("/api/product",product);
+
+const order = require("./src/app/order/route")
+app.use("/api/user",order);
 
 
 module.exports = app;

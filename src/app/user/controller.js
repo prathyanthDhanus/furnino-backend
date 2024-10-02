@@ -3,10 +3,13 @@ const {
   userDefaultLoginDb,
   loginWithGoogleDb,
   loginWithOtpDb,
-  loginWithVerifyOtpDb
+  loginWithVerifyOtpDb,
+  userProfileDb,
+  updateProfileDb,
+  profileDeleteDb
 } = require("../user/services/db");
 
-const {userTokenService} = require("./services/common");
+const { userTokenService } = require("./services/common");
 
 module.exports = {
   //===================== user register =======================
@@ -60,8 +63,8 @@ module.exports = {
   //====================== login with otp (verify otp) ========================
 
   loginWithVerifyOtp: async (req, res) => {
-    const {userId, otp } = req.body;
-    const verifyOtp = await loginWithVerifyOtpDb(userId,otp);
+    const { userId, otp } = req.body;
+    const verifyOtp = await loginWithVerifyOtpDb(userId, otp);
     const generateToken = await userTokenService(verifyOtp);
     return res.status(200).json({
       status: "success",
@@ -69,4 +72,91 @@ module.exports = {
       data: generateToken,
     });
   },
+
+  //====================== user profile address creation ========================
+
+  userProfile: async (req, res) => {
+    const userId = req.user.userId;
+    const {
+      name,
+      houseName,
+      street,
+      landMark,
+      city,
+      district,
+      state,
+      pincode,
+      addressType,
+    } = req.body;
+
+    const saveProfile = await userProfileDb(
+      name,
+      houseName,
+      street,
+      landMark,
+      city,
+      district,
+      state,
+      pincode,
+      addressType,
+      userId
+    );
+    return res.status(200).json({
+      status: "success",
+      message: "Profile updated successfully",
+      data: saveProfile,
+    });
+  },
+
+  //====================== user profile address updation ========================
+
+  updateProfile: async (req, res) => {
+    const addressId = req.params.addressId;
+    const userId = req.user.userId;
+    const {
+      name,
+      houseName,
+      street,
+      landMark,
+      city,
+      district,
+      state,
+      pincode,
+      addressType,
+    } = req.body;
+
+    const updateAddress = await updateProfileDb(
+      name,
+      houseName,
+      street,
+      landMark,
+      city,
+      district,
+      state,
+      pincode,
+      addressType,
+      addressId,
+      userId
+    );
+    return res.status(200).json({
+      status: "success",
+      message: "Profile updated successfully",
+      data: updateAddress,
+    });
+  },
+
+  //====================== user profile address delete ========================
+
+  profileDelete :async(req,res)=>{
+
+    const addressId = req.params.addressId;
+    const userId = req.user.userId;
+
+    const deleteAddressProfile = await profileDeleteDb(addressId,userId);
+    return res.status(200).json({
+      status: "success",
+      message: "Address deleted successfully",
+      data: deleteAddressProfile,
+    });
+  }
 };

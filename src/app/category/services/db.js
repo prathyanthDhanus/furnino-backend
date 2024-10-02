@@ -3,8 +3,7 @@ const cloudinary = require("cloudinary").v2;
 const AppError = require("../../../utils/appError");
 
 module.exports = {
-
-    //================= add new category ===================
+  //================= add new category ===================
 
   addCategoryDb: async (categoryName, imagePath) => {
     // Find if the category already exists
@@ -16,8 +15,8 @@ module.exports = {
     console.log("findCategory", findCategory);
     if (findCategory.length > 0) {
       throw new AppError(
-        "Field validation error:Category already exist",
         "Category already exist",
+        "Field validation error:Category already exist",
         409
       );
     }
@@ -42,8 +41,8 @@ module.exports = {
 
     if (findCategory.length === 0) {
       throw new AppError(
-        "Field validation error:Category not found",
         "Category not found",
+        "Field validation error:Category not found",
         404
       );
     }
@@ -53,6 +52,7 @@ module.exports = {
   //================= update category ===================
 
   updateCategoryDb: async (categoryId, categoryName, imagePath = null) => {
+    console.log(categoryName);
     // Find the category
     const findCategory = await categoryModel.findOne({
       _id: categoryId,
@@ -61,16 +61,14 @@ module.exports = {
 
     if (!findCategory) {
       throw new AppError(
-        "Field validation error:Category not found",
         "Category not found",
+        "Field validation error:Category not found",
         404
       );
     }
 
-    // If a new image is provided, update the image in Cloudinary
     let updatedData = { categoryName: categoryName };
     if (imagePath) {
-      // Upload the new image to Cloudinary
       const result = await cloudinary.uploader.upload(imagePath, {
         folder: "categories",
       });
@@ -103,7 +101,11 @@ module.exports = {
     const findCategory = await categoryModel.findById(categoryId);
 
     if (!findCategory || findCategory.isDeleted) {
-      throw new AppError("Category not found", 404);
+      throw new AppError(
+        "Category not found",
+        "Field validation error:Category not found",
+        404
+      );
     }
 
     // Soft delete the category

@@ -131,4 +131,134 @@ module.exports = {
       );
     }
   },
+
+  //====================== user profile address creation ========================
+
+  userProfileDb: async (
+    name,
+    houseName,
+    street,
+    landMark,
+    city,
+    district,
+    state,
+    pincode,
+    addressType,
+    userId
+  ) => {
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          address: {
+            name,
+            houseName,
+            street,
+            landMark,
+            city,
+            district,
+            state,
+            pincode,
+            addressType,
+          },
+        },
+      },
+      { new: true, useFindAndModify: false }
+    );
+
+    if (!updatedUser) {
+      throw new AppError(
+        "Field validation error: User not found",
+        "User not found",
+        404
+      );
+    }
+
+    return updatedUser;
+  },
+
+  //====================== user profile address updation ========================
+
+  updateProfileDb: async (
+    name,
+    houseName,
+    street,
+    landMark,
+    city,
+    district,
+    state,
+    pincode,
+    addressType,
+    addressId,
+    userId
+  ) => {
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: userId, "address._id": addressId },
+      {
+        $set: {
+          "address.$": {
+            _id: addressId,
+            name,
+            houseName,
+            street,
+            landMark,
+            city,
+            district,
+            state,
+            pincode,
+            addressType,
+          },
+        },
+      },
+      { new: true, useFindAndModify: false }
+    );
+
+    if (!updatedUser) {
+      throw new AppError(
+        "Field validation error: Address not found",
+        "Address not found",
+        404
+      );
+    }
+
+    return updatedUser;
+  },
+
+  //====================== user profile address delete ========================
+
+  profileDeleteDb: async (addressId, userId) => {
+    const findUser = await userModel.findOne({
+      _id: userId,
+      "address._id": addressId,
+    });
+
+    if (!findUser) {
+      throw new AppError(
+        "Field validation error: Address not found",
+        "Address not found",
+        404
+      );
+    }
+
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          address: { _id: addressId },
+        },
+      },
+      { new: true, useFindAndModify: false }
+    );
+
+    if (!updatedUser) {
+      throw new AppError(
+        "Field validation error: Address not found",
+        "Address not found",
+        404
+      );
+    }
+
+    return updatedUser;
+  },
 };

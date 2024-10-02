@@ -9,8 +9,13 @@ router
  .post("/register",tryCatch(user.userRegister))
  .post("/login",tryCatch(user.userDefaultLogin))
  .post("/google/login",tryCatch(user.loginWithGoogle))
- .post("/otp/login",user.loginWithSendOtp)
- .post("/verify/otp/login",user.loginWithVerifyOtp)
+ .post("/otp/login",tryCatch(user.loginWithSendOtp))
+ .post("/verify/otp/login",tryCatch(user.loginWithVerifyOtp))
+ .post("/address",tokenVerifyUser,tryCatch(user.userProfile))
+
+ .put("/address/:addressId",tokenVerifyUser,tryCatch(user.updateProfile))
+
+ .delete("/address/:addressId",tokenVerifyUser,tryCatch(user.profileDelete))
 
 
 
