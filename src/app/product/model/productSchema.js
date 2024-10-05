@@ -17,9 +17,29 @@ const productSchema = new Schema({
     required: true,
     trim: true,
   },
+  additionalInfo: {
+    type: String,
+    trim: true,
+  },
+  colour: [{
+    type: String,
+    trim: true,
+  }],
+  seatingCapacity: [{
+    type: String,
+    trim: true,
+  }],
   price: {
     type: Number,
     required: true,
+    min: 0,
+  },
+  discountPercentage: {
+    type: Number,
+    min: 0,
+  },
+  discountPrice: {
+    type: Number,
     min: 0,
   },
   categoryId: {

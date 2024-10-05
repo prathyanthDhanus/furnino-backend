@@ -12,8 +12,7 @@ const storage = (folder) => new CloudinaryStorage({
 });
 
 // Multer setup for handling multiple images
-const uploadMultiple = (folder) => multer({ storage: storage(folder) }).array("images", 5); // Handle array of up to 5 images
-
+const uploadMultiple = (folder) => multer({ storage: storage(folder) }).array("images", 5);
 module.exports = {
   uploadMultiple,
 };

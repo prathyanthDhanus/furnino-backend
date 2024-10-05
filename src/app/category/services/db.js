@@ -11,8 +11,6 @@ module.exports = {
       categoryName: categoryName,
       isDeleted: false,
     });
-
-    console.log("findCategory", findCategory);
     if (findCategory.length > 0) {
       throw new AppError(
         "Category already exist",
@@ -52,7 +50,6 @@ module.exports = {
   //================= update category ===================
 
   updateCategoryDb: async (categoryId, categoryName, imagePath = null) => {
-    console.log(categoryName);
     // Find the category
     const findCategory = await categoryModel.findOne({
       _id: categoryId,

@@ -8,10 +8,10 @@ const { uploadMultiple } = require("../../utils/multerArrayimages");
 router
 .post("/admin", uploadMultiple("products"), tryCatch(productController.addProduct))
 
-.get("/admin",tryCatch(productController.getAllProducts))
-.get("/user",tryCatch(productController.getAllProducts))
-.get("/admin", tryCatch(productController.getProductByIdDb))
-.get("/user", tryCatch(productController.getProductByIdDb))
+.get("/admin",tryCatch(productController.getAllProductsByCategory))
+.get("/user",tryCatch(productController.getAllProductsByCategory))
+.get("/admin/:productId", tryCatch(productController.getProductById))
+.get("/user/:productId", tryCatch(productController.getProductById))
 
 .put("/admin", uploadMultiple("products"), tryCatch(productController.updateProduct))
 

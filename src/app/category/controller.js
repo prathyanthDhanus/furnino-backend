@@ -11,6 +11,7 @@ module.exports = {
   addCategory: async (req, res) => {
     const { categoryName } = req.body;
     const imagePath = req.file.path;
+    console.log("imagepath",imagePath)
     const saveCategory = await addCategoryDb(categoryName, imagePath);
     return res.status(200).json({
       status: "success",

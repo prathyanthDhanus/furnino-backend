@@ -43,15 +43,15 @@ module.exports = {
         return token;
       } else {
         throw new AppError(
-          "Field validation error:Wrong password",
           "Wrong Password",
+          "Field validation error:Wrong password",
           401
         );
       }
     } else {
       throw new AppError(
+        "Wrong phone number.User not found",
         "Field validation error: User not found",
-        "Wrong phone number",
         404
       );
     }

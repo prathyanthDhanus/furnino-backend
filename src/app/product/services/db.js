@@ -1,5 +1,6 @@
 const productModel = require("../model/productSchema");
 const AppError = require("../../../utils/appError");
+const { addProductService } = require("./common");
 
 module.exports = {
   addProductDb: async (
@@ -9,10 +10,14 @@ module.exports = {
     price,
     categoryId,
     stock,
+    additionalInfo,
+    colour,
+    seatingCapacity,
+    discountPercentage,
     images
   ) => {
     const findProduct = await productModel.findOne({ categoryId, name ,isDeleted:false});
-
+   
     if (findProduct) {
       throw new AppError(
         "Product already exist",
@@ -20,6 +25,11 @@ module.exports = {
         409
       );
     }
+    let discountPrice = null; 
+      if(discountPercentage){
+        discountPrice = await addProductService(discountPercentage,price);
+      }
+    
 
     const saveProduct = new productModel({
       name: name,
@@ -28,18 +38,23 @@ module.exports = {
       price: price,
       categoryId: categoryId,
       stock: stock,
+      additionalInfo:additionalInfo,
+      discountPercentage: discountPercentage || 0,
+      discountPrice: discountPrice || price,   
+      colour:colour,
+      seatingCapacity:seatingCapacity,
       images: images,
     });
     await saveProduct.save();
     return saveProduct;
   },
 
-  getAllProductsDb: async () => {
-    const findProduct = await productModel.find({isDeleted:false});
+  getAllProductsByCategoryDb: async (categoryId) => {
+    const findProduct = await productModel.find({isDeleted:false,categoryId:categoryId});
     if (findProduct.length === 0) {
       throw new AppError(
         "No products available",
-        "Field validation error:SProduct already exist",
+        "Field validation error:No products available",
         404
       );
     }
@@ -49,7 +64,7 @@ module.exports = {
   getProductByIdDb: async (productId) => {
     const findProduct = await productModel.findById(productId);
 
-    if (findProduct) {
+    if (!findProduct) {
       throw new AppError(
         "No products available",
         "Field validation error:Product already exist",

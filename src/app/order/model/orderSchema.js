@@ -28,7 +28,13 @@ const orderSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-});
 
+  orderStatus: {
+    type: String,
+    enum: ["Ordered", "Shipped", "Out for delivery", "Order Completed"],
+    default: "Ordered",
+  },
+});
+  
 const order = mongoose.model("order", orderSchema);
 module.exports = order;
