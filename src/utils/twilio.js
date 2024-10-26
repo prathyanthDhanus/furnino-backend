@@ -3,12 +3,12 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 const client = require('twilio')(accountSid, authToken);
 module.exports = {
-  sendSms: async (phoneNumber, otp, name) => {
+  sendSms: async (phoneNumber, otp) => {
 
   const info = await client.messages
   .create({
-    body: `Hai ${name}, your Software campus account verification code is ${otp}.`,
-    from: '+14245430135',
+    body: ` your Furnino app account verification code is ${otp}.`,
+    from: '+14155994594',
     to: `${phoneNumber}`
   })
 

@@ -6,10 +6,11 @@ const {
   loginWithVerifyOtpDb,
   userProfileDb,
   updateProfileDb,
-  profileDeleteDb
+  addressDeleteDb,
+  fetchUserProfileDb,
 } = require("../user/services/db");
 
-const { userTokenService } = require("./services/common");
+const { userTokenService, userPaymentService } = require("./services/common");
 
 module.exports = {
   //===================== user register =======================
@@ -52,23 +53,34 @@ module.exports = {
 
   loginWithSendOtp: async (req, res) => {
     const { email, phoneNumber } = req.body;
-    const findUser = await loginWithOtpDb(email, phoneNumber);
+    console.log(req.body)
+ 
+  console.log(phoneNumber)
+    if (!email && !phoneNumber) {
+      return res.status(400).json({
+        status: "error",
+        message: "Please provide a valid email or phone number.",
+      });
+    }
+    const generateOtp = await loginWithOtpDb(
+    email,phoneNumber
+    );
     return res.status(200).json({
       status: "success",
-      message: "User verified successfully",
-      data: findUser,
+      message: generateOtp?.otpMessage,
+      data: generateOtp,
     });
   },
 
   //====================== login with otp (verify otp) ========================
 
   loginWithVerifyOtp: async (req, res) => {
-    const { userId, otp } = req.body;
-    const verifyOtp = await loginWithVerifyOtpDb(userId, otp);
+    const { email, phoneNumber, otp } = req.body;
+    const verifyOtp = await loginWithVerifyOtpDb(email, phoneNumber, otp);
     const generateToken = await userTokenService(verifyOtp);
     return res.status(200).json({
       status: "success",
-      message: "User logged in successfully",
+      message: "OTP verified successfully",
       data: generateToken,
     });
   },
@@ -147,16 +159,40 @@ module.exports = {
 
   //====================== user profile address delete ========================
 
-  profileDelete :async(req,res)=>{
-
+  addressDelete: async (req, res) => {
     const addressId = req.params.addressId;
     const userId = req.user.userId;
 
-    const deleteAddressProfile = await profileDeleteDb(addressId,userId);
+    const deleteAddressProfile = await addressDeleteDb(addressId, userId);
     return res.status(200).json({
       status: "success",
       message: "Address deleted successfully",
       data: deleteAddressProfile,
     });
-  }
+  },
+
+  //====================== fetch user profile  details ========================
+
+  fetchUserProfile: async (req, res) => {
+    const userId = req?.user?.userId;
+    const findUserProfile = await fetchUserProfileDb(userId);
+
+    return res.status(200).json({
+      status: "success",
+      message: "User profile fetched successfully",
+      data: findUserProfile,
+    });
+  },
+
+  //====================== user payment details ========================
+
+  userPayment: async (req, res) => {
+    const { totalAmount } = req.body;
+    const payment = await userPaymentService(totalAmount);
+    return res.status(200).json({
+      status: "success",
+      message: "User profile fetched successfully",
+      data: payment,
+    });
+  },
 };

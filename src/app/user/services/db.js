@@ -81,34 +81,25 @@ module.exports = {
   //===================== user login with otp =========================
 
   loginWithOtpDb: async (email, phoneNumber) => {
-    let findUser;
-    if (email) {
-      findUser = await userModel.findOne({ email: email });
-    } else {
-      findUser = await userModel.findOne({ phoneNumber: phoneNumber });
-    }
-    if (findUser) {
-      const sendOtp = await sendOtpAndSave(
-        findUser?.email,
-        findUser?.phoneNumber,
-        findUser?._id,
-        findUser?.userName
-      );
-      return sendOtp;
-    } else {
-      throw new AppError(
-        "Field validation error: User not found",
-        "Wrong credentials",
-        404
-      );
-    }
+   
+   const generateOtp = await sendOtpAndSave(email,phoneNumber);
+   if(!generateOtp){
+    throw new AppError(
+      "Something went wrong",
+      "Field validation error: Something went wrong",
+      400
+    );
+   }
+   return generateOtp;
+
   },
 
   //====================== login with otp (verify otp) ========================
 
-  loginWithVerifyOtpDb: async (userId, otp) => {
+  loginWithVerifyOtpDb: async (email,phoneNumber, otp) => {
+    const userId = email||phoneNumber
     const findOtp = await otpModel
-      .findOne({ userId: userId })
+      .findOne({ userId})
       .sort({ createdAt: -1 })
       .limit(1);
 
@@ -120,7 +111,7 @@ module.exports = {
         throw new AppError(
           "Field validation error: OTP not found",
           "Wrong OTP",
-          404
+          400
         );
       }
     } else {
@@ -226,7 +217,7 @@ module.exports = {
 
   //====================== user profile address delete ========================
 
-  profileDeleteDb: async (addressId, userId) => {
+  addressDeleteDb: async (addressId, userId) => {
     const findUser = await userModel.findOne({
       _id: userId,
       "address._id": addressId,
@@ -261,4 +252,18 @@ module.exports = {
 
     return updatedUser;
   },
+
+  //====================== user profile address delete ========================
+
+  fetchUserProfileDb:async(userId)=>{
+  const finduser = userModel.find({_id:userId});
+    if(!finduser){
+      throw new AppError(
+        "Field validation error: user profile not found",
+        "user profile not found",
+        404
+      );
+    }
+    return finduser;
+  }
 };

@@ -7,6 +7,8 @@ const {
 } = require("./services/db");
 
 module.exports = {
+  //================= create product ===================
+
   addProduct: async (req, res) => {
     const {
       name,
@@ -21,6 +23,7 @@ module.exports = {
       discountPercentage,
     } = req.body;
 
+
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         status: "error",
@@ -30,8 +33,6 @@ module.exports = {
 
     // Extract Cloudinary URLs from the file data provided by multer-storage-cloudinary
     const images = req.files.map((file) => file.path);
-
-    console.log("Uploaded images:", images);
 
     const saveProduct = await addProductDb(
       name,
@@ -54,6 +55,8 @@ module.exports = {
     });
   },
 
+  //================= get all products based on category ===================
+
   getAllProductsByCategory: async (req, res) => {
     const { categoryId } = req.query;
     const findProduct = await getAllProductsByCategoryDb(categoryId);
@@ -64,6 +67,8 @@ module.exports = {
     });
   },
 
+  //================= get  product based on product id ===================
+
   getProductById: async (req, res) => {
     const productId = req.params.productId;
     const findProduct = await getProductByIdDb(productId);
@@ -73,6 +78,8 @@ module.exports = {
       data: findProduct,
     });
   },
+
+  //================= update product ===================
 
   updateProduct: async (req, res) => {
     const { name, description, info, price, categoryId, stock, productId } =
@@ -94,6 +101,8 @@ module.exports = {
       data: updateProduct,
     });
   },
+
+  //================= delete product ===================
 
   deleteProduct: async (req, res) => {
     const productId = req.query;

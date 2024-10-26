@@ -6,16 +6,12 @@ const wishlistSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
-  subCategoryId: {
+  productId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "subcategory",
+    ref: "product",
     required: true,
   },
-  categoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "category",
-    required: true,
-  },
+
   isDeleted: {
     type: Boolean,
     default: false,

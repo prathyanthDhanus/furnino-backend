@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer')
 
 module.exports={
 
-    sendEmail:async(email,otp,name)=>{
+    sendEmail:async(email,otp)=>{
         
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
@@ -21,8 +21,8 @@ module.exports={
             // from: process.env.EMAIL,
             from: process.env.APP_EMAIL,
             to: email,
-            subject: `OTP  for Laundry app verification`,
-            html: `<h4>Dear ${name},</h4>
+            subject: `OTP  for Furnino app verification`,
+            html: `
             <p>This is to acknowledge the details of your login. Login has been processed successfully.</p>
             
             <ul>
@@ -30,9 +30,9 @@ module.exports={
               
             </ul>
             <p>OTP will Expire in <strong> 5 minutes</strong></p>
-            <p>Thank you for your login. If you have any queries, contact the Laundry info team.</p>
+            <p>Thank you for your login. If you have any queries, contact the Furnino info team.</p>
             <p>Best regards,</p>
-            <h4>Laundry</h4>
+            <h4>Furnino</h4>
             `,
             
             headers: { 'x-myheader': 'test header' }

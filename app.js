@@ -27,5 +27,12 @@ app.use("/api/product",product);
 const order = require("./src/app/order/route")
 app.use("/api/user",order);
 
+const cart = require("./src/app/cart/route")
+app.use("/api/cart",cart);
+
+const wishist = require("./src/app/wishlist/route")
+app.use("/api/wishlist",wishist);
+
+
 
 module.exports = app;

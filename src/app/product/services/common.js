@@ -2,7 +2,8 @@
 module.exports = {
 
     addProductService :async(discountPercentage,price)=>{
-        return price - (price * discountPercentage / 100);
+        let discountedPrice =  price - (price * discountPercentage / 100);
+        return Math.ceil(discountedPrice);
 
     }
 }

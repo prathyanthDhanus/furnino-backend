@@ -4,21 +4,22 @@ const { sendSms } = require("../../utils/twilio");
 const bcrypt = require("bcrypt");
 
 module.exports = {
-  sendOtpAndSave: async (email, phoneNumber, userId, userName) => {
+  sendOtpAndSave: async (email, phoneNumber) => {
     //Generate OTP
-    const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+    const otpCode = Math.floor(100000 + Math.random() * 9000).toString();
     let otpSent = false;
     let otpMessage;
+    let userId = email || phoneNumber;
 
     if (email) {
-      otpSent = await sendEmail(email, otpCode, userName);
+      otpSent = await sendEmail(email, otpCode);
 
       otpMessage = "A verification code has been sent to your email address";
     } else if (phoneNumber) {
-      otpSent = await sendSms(phoneNumber, otpCode, userName);
+      otpSent = await sendSms(phoneNumber, otpCode);
       otpMessage = "A verification code has been sent to your phoneNumber";
-    } 
-        
+    }
+
     if (otpSent) {
       const hashOtp = await bcrypt.hash(otpCode, 10);
       const otp = new otpModel({

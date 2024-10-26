@@ -16,8 +16,12 @@ module.exports = {
     discountPercentage,
     images
   ) => {
-    const findProduct = await productModel.findOne({ categoryId, name ,isDeleted:false});
-   
+    const findProduct = await productModel.findOne({
+      categoryId,
+      name,
+      isDeleted: false,
+    });
+
     if (findProduct) {
       throw new AppError(
         "Product already exist",
@@ -25,11 +29,10 @@ module.exports = {
         409
       );
     }
-    let discountPrice = null; 
-      if(discountPercentage){
-        discountPrice = await addProductService(discountPercentage,price);
-      }
-    
+    let discountPrice = null;
+    if (discountPercentage) {
+      discountPrice = await addProductService(discountPercentage, price);
+    }
 
     const saveProduct = new productModel({
       name: name,
@@ -38,11 +41,11 @@ module.exports = {
       price: price,
       categoryId: categoryId,
       stock: stock,
-      additionalInfo:additionalInfo,
+      additionalInfo: additionalInfo,
       discountPercentage: discountPercentage || 0,
-      discountPrice: discountPrice || price,   
-      colour:colour,
-      seatingCapacity:seatingCapacity,
+      discountPrice: discountPrice || price,
+      colour: colour,
+      seatingCapacity: seatingCapacity,
       images: images,
     });
     await saveProduct.save();
@@ -50,7 +53,10 @@ module.exports = {
   },
 
   getAllProductsByCategoryDb: async (categoryId) => {
-    const findProduct = await productModel.find({isDeleted:false,categoryId:categoryId});
+    const findProduct = await productModel.find({
+      isDeleted: false,
+      categoryId: categoryId,
+    });
     if (findProduct.length === 0) {
       throw new AppError(
         "No products available",
@@ -98,7 +104,7 @@ module.exports = {
       { new: true }
     );
 
-    if(!updateProduct){
+    if (!updateProduct) {
       throw new AppError(
         "Product not updated.Please try again",
         "Field validation error:Product not updated.Please try again",
@@ -110,17 +116,17 @@ module.exports = {
     return updateProduct;
   },
 
-  deleteProductDb : async(productId)=>{
-    const deletedProduct = await productModel.findByIdAndUpdate(productId,{isDeleted:true});
+  deleteProductDb: async (productId) => {
+    const deletedProduct = await productModel.findByIdAndUpdate(productId, {
+      isDeleted: true,
+    });
 
-    if(!deletedProduct){
+    if (!deletedProduct) {
       throw new AppError(
         "Product not deleted.Please try again",
         "Field validation error:Product not deleted.Please try again",
         400
       );
-      
     }
-
-  }
+  },
 };

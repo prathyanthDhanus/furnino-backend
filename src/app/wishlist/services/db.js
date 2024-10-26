@@ -4,30 +4,37 @@ const AppError = require("../../../utils/appError");
 module.exports = {
   //================= add to wishlist ===================
 
-  addToWishlistDb: async (subCategoryId, userId) => {
-    const findProductOnWishlist = await wishlist.findById(subCategoryId);
-
-    if (subCategoryId) {
+  addToWishlistDb: async (productId, userId) => {
+    // Check if the product is already in the wishlist for this user
+    const findProductOnWishlist = await wishlist.findOne({
+      userId: userId,
+      productId: productId
+    });
+  
+    // If the product is found, throw an error
+    if (findProductOnWishlist) {
       throw new AppError(
-        "Product already existing in wishlist",
-        "Field validation error:Product already existing in wishlist",
+        "Product already exists in the wishlist",
+        "Field validation error: Product already exists in the wishlist",
         409
       );
     }
-    const categoryId = findProductOnWishlist?.categoryId;
+  
+    // If not found, proceed to add the product to the wishlist
     const saveProductOnWishlist = new wishlist({
       userId: userId,
-      subCategoryId: subCategoryId,
-      categoryId: categoryId,
+      productId: productId,
     });
     await saveProductOnWishlist.save();
     return saveProductOnWishlist;
   },
+  
 
   //================= get wishlist of a user ===================
 
   getAllWishlistOfaUserDb: async (userId) => {
-    const findWishlistOfaUser = await wishlist.findById(userId);
+    const findWishlistOfaUser = await wishlist.find({userId}).populate("productId");
+    
     if (!findWishlistOfaUser) {
       throw new AppError(
         "Your wishist is empty",
@@ -40,10 +47,10 @@ module.exports = {
 
   //================= delete product from the wishlist ===================
 
-  deleteFromWishlistDb: async (productId) => {
-    const findProduct = await wishlist.findByIdAndDelete(productId);
+  deleteFromWishlistDb: async (wishlistId) => {
+    const findProduct = await wishlist.findByIdAndDelete(wishlistId);
 
-    if (findProduct) {
+    if (!findProduct) {
       throw new AppError(
         "Product not found",
         "Field validation error:Product not found",

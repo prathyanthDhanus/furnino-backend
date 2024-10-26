@@ -6,11 +6,6 @@ const reviewSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
-//   subCategoryId: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "subcategory",
-//     required: true,
-//   },
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "product",
