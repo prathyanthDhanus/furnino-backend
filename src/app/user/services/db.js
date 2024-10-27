@@ -81,25 +81,23 @@ module.exports = {
   //===================== user login with otp =========================
 
   loginWithOtpDb: async (email, phoneNumber) => {
-   
-   const generateOtp = await sendOtpAndSave(email,phoneNumber);
-   if(!generateOtp){
-    throw new AppError(
-      "Something went wrong",
-      "Field validation error: Something went wrong",
-      400
-    );
-   }
-   return generateOtp;
-
+    const generateOtp = await sendOtpAndSave(email, phoneNumber);
+    if (!generateOtp) {
+      throw new AppError(
+        "Something went wrong",
+        "Field validation error: Something went wrong",
+        400
+      );
+    }
+    return generateOtp;
   },
 
   //====================== login with otp (verify otp) ========================
 
-  loginWithVerifyOtpDb: async (email,phoneNumber, otp) => {
-    const userId = email||phoneNumber
+  loginWithVerifyOtpDb: async (email, phoneNumber, otp) => {
+    const userId = email || phoneNumber;
     const findOtp = await otpModel
-      .findOne({ userId})
+      .findOne({ userId })
       .sort({ createdAt: -1 })
       .limit(1);
 
@@ -109,15 +107,15 @@ module.exports = {
         return findOtp._id;
       } else {
         throw new AppError(
-          "Field validation error: OTP not found",
           "Wrong OTP",
+          "Field validation error: OTP not found",
           400
         );
       }
     } else {
       throw new AppError(
-        "Field validation error: Wrong OTP",
         "OTP not found",
+        "Field validation error: Wrong OTP",
         404
       );
     }
@@ -159,8 +157,8 @@ module.exports = {
 
     if (!updatedUser) {
       throw new AppError(
-        "Field validation error: User not found",
         "User not found",
+        "Field validation error: User not found",
         404
       );
     }
@@ -206,8 +204,8 @@ module.exports = {
 
     if (!updatedUser) {
       throw new AppError(
-        "Field validation error: Address not found",
         "Address not found",
+        "Field validation error: Address not found",
         404
       );
     }
@@ -225,12 +223,11 @@ module.exports = {
 
     if (!findUser) {
       throw new AppError(
-        "Field validation error: Address not found",
         "Address not found",
+        "Field validation error: Address not found",
         404
       );
     }
-
 
     const updatedUser = await userModel.findByIdAndUpdate(
       userId,
@@ -244,8 +241,8 @@ module.exports = {
 
     if (!updatedUser) {
       throw new AppError(
-        "Field validation error: Address not found",
         "Address not found",
+        "Field validation error: Address not found",
         404
       );
     }
@@ -255,15 +252,51 @@ module.exports = {
 
   //====================== user profile address delete ========================
 
-  fetchUserProfileDb:async(userId)=>{
-  const finduser = userModel.find({_id:userId});
-    if(!finduser){
+  fetchUserProfileDb: async (userId) => {
+    const finduser = userModel.find({ _id: userId });
+    if (!finduser) {
       throw new AppError(
-        "Field validation error: user profile not found",
         "user profile not found",
+        "Field validation error: user profile not found",
         404
       );
     }
     return finduser;
-  }
+  },
+
+  //====================== forgot password (mobile/email verify) ========================
+
+  forgotPasswordVerifyUserDb: async (phoneNumber) => {
+    const findUser = await userModel.findOne({ phoneNumber: phoneNumber });
+    // console.log(findUser);
+    if (!findUser) {
+      throw new AppError(
+        "user profile not found",
+        "Field validation error: user profile not found",
+        404
+      );
+    }
+
+    return findUser;
+  },
+
+  //====================== create new password ========================
+
+  createNewUserPasswordDb: async (userId, newPassword) => {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const updtatePawword = await userModel.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    if (!updtatePawword) {
+      throw new AppError(
+        "Password not updated",
+        "Field validation error: Password not updated",
+        400
+      );
+    }
+    return updtatePawword;
+  },
 };

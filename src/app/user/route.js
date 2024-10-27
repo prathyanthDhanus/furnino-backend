@@ -15,8 +15,11 @@ router
  .post("/verify/otp/login",tryCatch(user.loginWithVerifyOtp))
  .post("/address",tokenVerifyUser,tryCatch(user.userProfile))
  .post("/payment",tokenVerifyUser,tryCatch(user.userPayment))
+ .post("/verify-user",tryCatch(user.forgotPasswordVerifyUser))
+ .post("/verify-otp",tryCatch(user.forgotPasswordOTPVerify))
 
  .put("/address/:addressId",tokenVerifyUser,tryCatch(user.updateProfile))
+ .put("/password",tryCatch(user.createNewUserPassword))
 
  .delete("/address/:addressId",tokenVerifyUser,tryCatch(user.profileDelete))
 

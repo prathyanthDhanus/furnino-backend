@@ -8,6 +8,8 @@ const {
   updateProfileDb,
   addressDeleteDb,
   fetchUserProfileDb,
+  forgotPasswordVerifyUserDb,
+  createNewUserPasswordDb,
 } = require("../user/services/db");
 
 const { userTokenService, userPaymentService } = require("./services/common");
@@ -41,6 +43,8 @@ module.exports = {
 
   loginWithGoogle: async (req, res) => {
     const { email } = req?.body;
+    console.log(req?.body);
+    console.log(email);
     const findUser = await loginWithGoogleDb(email);
     return res.status(200).json({
       status: "success",
@@ -53,18 +57,14 @@ module.exports = {
 
   loginWithSendOtp: async (req, res) => {
     const { email, phoneNumber } = req.body;
-    console.log(req.body)
- 
-  console.log(phoneNumber)
+
     if (!email && !phoneNumber) {
       return res.status(400).json({
         status: "error",
         message: "Please provide a valid email or phone number.",
       });
     }
-    const generateOtp = await loginWithOtpDb(
-    email,phoneNumber
-    );
+    const generateOtp = await loginWithOtpDb(email, phoneNumber);
     return res.status(200).json({
       status: "success",
       message: generateOtp?.otpMessage,
@@ -193,6 +193,55 @@ module.exports = {
       status: "success",
       message: "User profile fetched successfully",
       data: payment,
+    });
+  },
+
+  //====================== forgot password (mobile verify) ========================
+
+  forgotPasswordVerifyUser: async (req, res) => {
+    const { phoneNumber } = req.body;
+    console.log(phoneNumber)
+    if (!phoneNumber) {
+      return res.status(400).json({
+        status: "error",
+        message: "Please provide a valid phone number.",
+      });
+    }
+    const findUser = await forgotPasswordVerifyUserDb(phoneNumber);
+    const generateOtp = await loginWithOtpDb(null, findUser?.phoneNumber);
+    return res.status(200).json({
+      status: "success",
+      message: generateOtp?.otpMessage,
+      data: generateOtp,
+    });
+  },
+
+  //====================== forgot password (otp verify) ========================
+
+  forgotPasswordOTPVerify: async (req, res) => {
+    const { phoneNumber, otp } = req.body;
+    const verifyOTp = await loginWithVerifyOtpDb(null, phoneNumber, otp);
+    return res.status(200).json({
+      status: "success",
+      message: "OTP authenticated successfully",
+      data: verifyOTp,
+    });
+  },
+
+  //====================== create new password ========================
+
+  createNewUserPassword: async (req, res) => {
+    const { newPassword, phoneNumber } = req.body;
+    const findUser = await forgotPasswordVerifyUserDb(phoneNumber);
+    const updatePassword = await createNewUserPasswordDb(
+      findUser?._id,
+      newPassword
+    );
+
+    return res.status(200).json({
+      status: "success",
+      message: "New password created successfully.Please login",
+      data: updatePassword,
     });
   },
 };
