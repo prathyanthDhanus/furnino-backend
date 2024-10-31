@@ -34,5 +34,4 @@ const wishist = require("./src/app/wishlist/route")
 app.use("/api/wishlist",wishist);
 
 
-
 module.exports = app;

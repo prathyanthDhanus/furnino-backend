@@ -2,13 +2,15 @@ const orderschema = require("../model/orderSchema");
 const AppError = require("../../../utils/appError");
 
 module.exports = {
-  addOrderDb: async (productId, orderedAddressId, quantity, userId,amount) => {
+  //====================== add order ========================
+
+  addOrderDb: async (productId, orderedAddressId, quantity, userId, amount) => {
     const saveOrder = new orderschema({
       productId: productId,
       orderedAddress: orderedAddressId,
       quantity: quantity,
       userId: userId,
-      amount:amount
+      amount: amount,
     });
     await saveOrder.save();
     if (!saveOrder) {
@@ -20,4 +22,24 @@ module.exports = {
     }
     return saveOrder;
   },
+
+  //====================== get all order of a user ========================
+
+  getallOrdersfAUserDb: async (userId) => {
+     const findOrders = await orderschema.find({userId});
+
+    if(!findOrders){
+      throw new AppError(
+        "Orders not found",
+        "Field validation error:Ordersnot found",
+        404
+      );
+    }
+    return findOrders;
+  },
+
+  //====================== get all order of a user ========================
+  deleteproductFromOrderDb:async(productId)=>{
+
+  }
 };

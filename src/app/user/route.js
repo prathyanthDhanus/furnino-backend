@@ -21,7 +21,7 @@ router
  .put("/address/:addressId",tokenVerifyUser,tryCatch(user.updateProfile))
  .put("/password",tryCatch(user.createNewUserPassword))
 
- .delete("/address/:addressId",tokenVerifyUser,tryCatch(user.profileDelete))
+ .delete("/address/:addressId",tokenVerifyUser,tryCatch(user.addressDelete))
 
 
 

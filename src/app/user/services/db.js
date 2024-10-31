@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const { userTokenService } = require("./common");
 const { sendOtpAndSave } = require("../../otp/otpController");
 const otpModel = require("../../otp/model/otpSchema");
+const cartModel = require("../../cart/model/cartSchema");
+const orderModel = require("../../order/model/orderSchema");
 
 module.exports = {
   //===================== user register ===================
@@ -253,15 +255,15 @@ module.exports = {
   //====================== user profile address delete ========================
 
   fetchUserProfileDb: async (userId) => {
-    const finduser = userModel.find({ _id: userId });
-    if (!finduser) {
+    const findUser = userModel.find({ _id: userId });
+    if (!findUser) {
       throw new AppError(
         "user profile not found",
         "Field validation error: user profile not found",
         404
       );
     }
-    return finduser;
+    return findUser;
   },
 
   //====================== forgot password (mobile/email verify) ========================
@@ -298,5 +300,59 @@ module.exports = {
       );
     }
     return updtatePawword;
+  },
+
+  //====================== create new order ========================
+
+  createOrderDb: async (
+    userId,
+    totalAmount,
+    findUser,
+    addressId,
+    productId,
+    selectedCapacity,
+    quantity
+  ) => {
+    const cartItems = await cartModel.find({ userId });
+    const selectedAddress = findUser.address.find(
+      (addr) => addr._id.toString() === addressId
+    );
+  console.log(quantity)
+    let orderProducts;
+
+    if (cartItems?.length > 0) {
+      // Prepare order data from cart items
+      orderProducts = cartItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        selectedCapacity: item.selectedCapacity,
+      }));
+
+      // Remove cart items after successful order creation
+      await cartModel.deleteMany({ userId });
+    } else {
+      // If no cart items, use the provided single product details
+      orderProducts = [
+        {
+          productId,
+          quantity: quantity,
+          selectedCapacity,
+        },
+      ];
+    }
+
+    // Create the order with either cart items or a single product
+    const newOrder = new orderModel({
+      userId,
+      products: orderProducts,
+      totalAmount,
+      paymentStatus: "Completed", // Assuming successful payment
+      orderStatus: "Ordered",
+      shippingDetails: selectedAddress,
+    });
+
+    await newOrder.save(); // Save the order to the database
+
+    return newOrder;
   },
 };

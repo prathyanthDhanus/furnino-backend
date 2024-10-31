@@ -10,6 +10,8 @@ const {
   fetchUserProfileDb,
   forgotPasswordVerifyUserDb,
   createNewUserPasswordDb,
+  createOrderDb,
+  
 } = require("../user/services/db");
 
 const { userTokenService, userPaymentService } = require("./services/common");
@@ -88,7 +90,8 @@ module.exports = {
   //====================== user profile address creation ========================
 
   userProfile: async (req, res) => {
-    const userId = req.user.userId;
+    const userId = req?.user?.userId;
+    console.log(userId)
     const {
       name,
       houseName,
@@ -100,7 +103,7 @@ module.exports = {
       pincode,
       addressType,
     } = req.body;
-
+ 
     const saveProfile = await userProfileDb(
       name,
       houseName,
@@ -187,13 +190,19 @@ module.exports = {
   //====================== user payment details ========================
 
   userPayment: async (req, res) => {
-    const { totalAmount } = req.body;
-    const payment = await userPaymentService(totalAmount);
+    const { totalAmount,addressId,productId,selectedCapacity ,quantity} = req.body;
+    console.log("quantity",quantity);
+    const userId = req.user.userId;
+    const findUserArray = await fetchUserProfileDb(userId);
+    const findUser = findUserArray[0]; // Access the first user object
+    const payment = await userPaymentService(totalAmount,findUser,addressId);
+    const order = await createOrderDb(userId,totalAmount,findUser,addressId,productId,selectedCapacity,quantity);
     return res.status(200).json({
       status: "success",
-      message: "User profile fetched successfully",
+      message: "Payment gateway opened successfully",
       data: payment,
     });
+
   },
 
   //====================== forgot password (mobile verify) ========================
