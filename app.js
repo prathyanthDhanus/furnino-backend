@@ -25,7 +25,7 @@ const product = require("./src/app/product/route")
 app.use("/api/product",product);
 
 const order = require("./src/app/order/route")
-app.use("/api/user",order);
+app.use("/api/order",order);
 
 const cart = require("./src/app/cart/route")
 app.use("/api/cart",cart);

@@ -1,13 +1,17 @@
-const { addOrderDb ,getallOrdersfAUserDb,deleteproductFromOrderDb} = require("./services/db");
+const {
+  addOrderDb,
+  getallOrdersfAUserDb,
+  deleteproductFromOrderDb,
+} = require("./services/db");
 
 module.exports = {
-
-   //====================== add order ========================
+  //====================== add order ========================
 
   addOrder: async (req, res) => {
     const userId = req?.user?.userId;
 
-    const { productId, quantity,amount,orderedAddressId ,paymentType} = req.body;
+    const { productId, quantity, amount, orderedAddressId, paymentType } =
+      req.body;
     const saveOrder = await addOrderDb(
       productId,
       orderedAddressId,
@@ -25,22 +29,30 @@ module.exports = {
 
   //====================== get all order of a user ========================
 
-getallOrdersfAUser:async(req,res)=>{
-  const userId = req?.user?.userId;
-
-  const findOrders = await getallOrdersfAUserDb(userId);
-  return res.status(200).json({
-    status: "success",
-    message: "Order created successfully",
-    data: findOrders,
-  });
-},
-
-  //====================== get all order of a user ========================
-  
-deleteproductFromOrderDb:async(req,res)=>{
-
-}
+  getallOrdersfAUser: async (req, res) => {
+    const userId = req?.user?.userId;
+    const findOrders = await getallOrdersfAUserDb(userId);
+    return res.status(200).json({
+      status: "success",
+      message: "Order created successfully",
+      data: findOrders,
+    });
+  },
 
   
+
+  //====================== delete/cancel a product form the order    ========================
+
+  deleteproductFromOrder: async (req, res) => {
+    const { orderId, productId } = req.body;
+    const findandRemoveOrder = await deleteproductFromOrderDb(
+      orderId,
+      productId
+    );
+    return res.status(200).json({
+      status: "success",
+      message: "Order created successfully",
+      data: findandRemoveOrder,
+    });
+  },
 };

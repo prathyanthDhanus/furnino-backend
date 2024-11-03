@@ -21,7 +21,13 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      orderStatus: {
+        type: String,
+        enum: ["Ordered", "Shipped", "Out for delivery", "Order Completed"],
+        default: "Ordered",
+      },
     },
+    
   ],
   totalAmount: {
     type: Number,
@@ -32,11 +38,7 @@ const orderSchema = new mongoose.Schema({
     enum: ["Pending", "Completed", "Failed"],
     default: "Pending",
   },
-  orderStatus: {
-    type: String,
-    enum: ["Ordered", "Shipped", "Out for delivery", "Order Completed"],
-    default: "Ordered",
-  },
+
   orderDate: {
     type: Date,
     default: Date.now,

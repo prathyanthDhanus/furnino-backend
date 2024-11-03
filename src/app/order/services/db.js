@@ -26,15 +26,15 @@ module.exports = {
   //====================== get all order of a user ========================
 
   getallOrdersfAUserDb: async (userId) => {
-     const findOrders = await orderschema.find({userId});
+    const findOrders = await orderschema.find({ userId })
+      .populate({
+        path: "products.productId", // Access the productId field within products
+      });
 
-    if(!findOrders){
-      throw new AppError(
-        "Orders not found",
-        "Field validation error:Ordersnot found",
-        404
-      );
+    if (!findOrders || findOrders.length === 0) {
+      throw new AppError("Orders not found", "Field validation error: Orders not found", 404);
     }
+
     return findOrders;
   },
 

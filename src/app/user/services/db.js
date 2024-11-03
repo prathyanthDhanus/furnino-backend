@@ -317,17 +317,18 @@ module.exports = {
     const selectedAddress = findUser.address.find(
       (addr) => addr._id.toString() === addressId
     );
-  console.log(quantity)
+  
     let orderProducts;
-
+  
     if (cartItems?.length > 0) {
       // Prepare order data from cart items
       orderProducts = cartItems.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
         selectedCapacity: item.selectedCapacity,
+        orderStatus: "Ordered", // Set default order status for each product
       }));
-
+  
       // Remove cart items after successful order creation
       await cartModel.deleteMany({ userId });
     } else {
@@ -337,22 +338,23 @@ module.exports = {
           productId,
           quantity: quantity,
           selectedCapacity,
+          orderStatus: "Ordered", // Set default order status
         },
       ];
     }
-
+  
     // Create the order with either cart items or a single product
     const newOrder = new orderModel({
       userId,
       products: orderProducts,
       totalAmount,
       paymentStatus: "Completed", // Assuming successful payment
-      orderStatus: "Ordered",
+      orderDate: Date.now(),
       shippingDetails: selectedAddress,
     });
-
+  
     await newOrder.save(); // Save the order to the database
-
+  
     return newOrder;
   },
 };

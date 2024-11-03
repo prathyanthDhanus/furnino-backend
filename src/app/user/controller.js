@@ -191,7 +191,6 @@ module.exports = {
 
   userPayment: async (req, res) => {
     const { totalAmount,addressId,productId,selectedCapacity ,quantity} = req.body;
-    console.log("quantity",quantity);
     const userId = req.user.userId;
     const findUserArray = await fetchUserProfileDb(userId);
     const findUser = findUserArray[0]; // Access the first user object
